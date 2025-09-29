@@ -1,9 +1,20 @@
 #include "HangmanGame.h"
 
+enum winlossState
+{
+	IN_PLAY,
+	WIN,
+	LOSE
+};
+
 void HangmanGame::init()
 {
 	// our chances
 	m_chances = 11;
+	// no mouse input
+	m_mouseInput = false;
+	// current game state
+	m_gameState = IN_PLAY;
 
 	// allocate
 	m_window = new Window();
@@ -13,25 +24,18 @@ void HangmanGame::init()
 	m_gallows = new GallowsMan();
 	m_inputBox = new InputBox();
 
-
 	// this needs a thread in it --> just call a thread for this initalization
 	std::thread threadForWordbank(&AssetManager::init, m_assetManager);
-	//m_assetManager->init();
 
 	m_window->init();
 	m_renderer->init(m_window->getRenderer());
 
-	// put this on a seperate thread
-	//std::thread t_loadAssets(&HangmanGame::loadAssets, this);
 	loadAssets();
 	
 	// we need this word before we can do anything else with the objects for text, unfortunately
-	// so we can pull a base word, and then let the rest load (for another playthrough)
 	threadForWordbank.join();
 	m_textMngr->setWordToGuess(m_assetManager->getWordToGuess());
 	
-	// we need to make sure the assets are all loaded first
-	//t_loadAssets.join();
 	// we also need the textures when creating the objects
 	createRenderObjects();
 
@@ -65,6 +69,18 @@ bool HangmanGame::mainLoop()
 					// we will enter the guess once enter is hit
 					// if backspace it will erase
 					// if there is another key that has been input, you need to erase first
+
+					if (m_gameState != IN_PLAY)
+					{
+						if (m_window->getKeyDownType() == keydown::MOUSEDOWN)
+						{
+							m_window->getMouseCoors(m_mouseX, m_mouseY);
+							m_mouseInput = true;
+						}
+						//else
+							//m_mouseInput = false;
+						continue;
+					}
 					if (m_window->getKeyDownType() == keydown::ENTER)
 					{
 						// now we can update the guesses letter
@@ -75,7 +91,7 @@ bool HangmanGame::mainLoop()
 							{
 								m_chances--;
 								m_gallows->updateGallows();
-								
+
 							}
 							m_keyDownInput = "";
 						}
@@ -89,6 +105,7 @@ bool HangmanGame::mainLoop()
 						// whatever letter is here will be passed to the inputbox
 						// the input box will update and get the appropriate texture
 						// for the input character object it has
+						m_mouseInput = false;
 						if (m_keyDownInput == "")
 							m_keyDownInput = getKeyInput(m_window->getKeyDownType());
 					}
@@ -102,28 +119,17 @@ bool HangmanGame::mainLoop()
 		
 		// WE NEED TO UPDATE
 		update();
+		if (m_quit)
+			quit = true;
 
 		// we need to draw the screen
 		drawScreen();
+
 	}
 
 	
 	return false;
 }
-
-void HangmanGame::takeInGuess(std::string guess)
-{
-	if (guess != "")
-		m_textMngr->checkGuess(guess);
-}
-
-void HangmanGame::endGame()
-{
-	// when m_chances = 0, exit the loop,
-	// call this
-	// game over and go out of the loop
-}
-
 void HangmanGame::close()
 {
 	m_gallows->close();
@@ -197,12 +203,22 @@ void HangmanGame::createTextObjects()
 			m_textMngr->registerGuessedLabel(textObj);
 		}
 		else if (i == "Input:") { continue; }
+		else if (i == "Game Over") { m_gallows->registerGameEndText(textObj, i); }
+		else if (i == "Game Win") { m_gallows->registerGameEndText(textObj, i); }
+		else if (i == "New Game") { continue; }
+		else if (i == "Exit Game") { continue; }
 		else
 			m_textMngr->registerLetters(textObj, i);
 
 		getTexturesForObjects(textObj, i);
 	}
 
+	createWordTextObjects();
+	createInputObjects();
+}
+
+void HangmanGame::createWordTextObjects()
+{
 	for (char c : m_textMngr->getWord())
 	{
 		Text_Object* textObj = new Text_Object();
@@ -222,17 +238,20 @@ void HangmanGame::createTextObjects()
 
 		underscoreTextObj->setVisibleFlag();
 	}
-	createInputObjects();
 }
 
 void HangmanGame::createInputObjects()
 {
 	Text_Object* textObj = new Text_Object();
 	Text_Object* textObj2 = new Text_Object();
+	Text_Object* newGameTextObj = new Text_Object();
+	Text_Object* exitGameTextObj = new Text_Object();
 	Text_Object* underscoreTextObj = new Text_Object();
 
 	textObj->setName("Input:");
-	underscoreTextObj->setName("_");
+	newGameTextObj->setName("New Game");
+	exitGameTextObj->setName("Exit Game");
+	underscoreTextObj->setName("_");	
 
 	textObj->setVisibleFlag();
 	textObj2->setVisibleFlag();
@@ -240,13 +259,19 @@ void HangmanGame::createInputObjects()
 
 	m_renderer->registerObj(textObj);
 	m_renderer->registerObj(textObj2);
+	m_renderer->registerObj(newGameTextObj);
+	m_renderer->registerObj(exitGameTextObj);
 	m_renderer->registerObj(underscoreTextObj);
 
 	m_inputBox->registerInputFieldObject(textObj);
 	m_inputBox->registerGuessObject(textObj2);
+	m_inputBox->registerNewGameObject(newGameTextObj);
+	m_inputBox->registerEndGameObject(exitGameTextObj);
 	m_inputBox->registerInputUnderscore(underscoreTextObj);
 
 	getTexturesForObjects(textObj, "Input:");
+	getTexturesForObjects(newGameTextObj, "New Game");
+	getTexturesForObjects(exitGameTextObj, "Exit Game");
 	getTexturesForObjects(underscoreTextObj, "_");
 
 }
@@ -330,6 +355,59 @@ void HangmanGame::update()
 	//m_gallows->updateGallows(); --> we only call this if a guess is wrong
 	m_textMngr->update();
 	m_inputBox->updateInputField(m_keyDownInput, m_assetManager);
+
+	if (m_gameState != IN_PLAY)
+	{
+		// we need to chieck if the mouse was clicked and in the right spot
+		if (m_mouseInput)
+		{
+			if (m_inputBox->checkifExitGameClicked(m_mouseX, m_mouseY))
+				m_quit = true;
+			if (m_inputBox->checkIfNewGameClicked(m_mouseX, m_mouseY))
+			{
+				resetGame();
+			}
+		}
+	}
+	else
+	{
+		if (m_chances == 0)
+		{
+			m_gameState = LOSE;
+			m_textMngr->showFullWord();
+			m_gallows->updateGallows();
+			m_inputBox->showNewGameBox();
+		}
+		if (m_textMngr->checkIfWordIsComplete())
+		{
+			m_gallows->setWinState();
+			m_inputBox->showNewGameBox();
+			m_gameState = WIN;
+		}
+	}
+
+	// we need to check if the chances are zero
+	// 
+	// we need to check if the word is full
+}
+
+void HangmanGame::resetGame()
+{
+	m_chances = 11;
+	m_mouseInput = false;
+	m_gameState = IN_PLAY;
+	m_quit = false;
+
+	// reset input and end game text
+	m_inputBox->resetInputBox();
+	// reset handman
+	m_gallows->resetState();
+	// reset guessed letters, word to guess, and "blank" spaces
+	m_textMngr->reset(m_renderer);
+	m_textMngr->setWordToGuess(m_assetManager->getWordToGuess());
+	// the objects needed for the word to guess and its blank spaces
+	createWordTextObjects();
+	m_textMngr->resetWordToGuess(m_window->getScreenWidth(), m_window->getScreenHeight());
 }
 
 void HangmanGame::drawScreen()

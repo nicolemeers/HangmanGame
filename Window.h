@@ -33,6 +33,8 @@ public:
 	// get the keydown event and return what key it is
 	int getKeyDownType() const;
 
+	void getMouseCoors(float& x, float& y);
+
 private:
 	int m_screenHeight = 0;
 	int m_screenWidth = 0;

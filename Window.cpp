@@ -16,7 +16,7 @@ bool Window::init()
 	bool success = true;
 
 	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
 		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 		success = false;
@@ -111,7 +111,12 @@ bool Window::isPollEventQuit() const
 
 bool Window::isKeydownEventTrue() const
 {
-	return (e.type == SDL_EVENT_KEY_DOWN);
+	if (e.type == SDL_EVENT_KEY_DOWN)
+		return true;
+	if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+		return true;
+	return false;
+	//return (e.type == SDL_EVENT_KEY_DOWN);
 }
 
 int Window::getKeyDownType() const
@@ -176,10 +181,17 @@ int Window::getKeyDownType() const
 		return keydown::ENTER;
 	case SDLK_BACKSPACE:
 		return keydown::BACKSPACE;
-	default:
-		return -1;
+	//default:
+		//return -1;
+	}
+	switch (e.type)
+	{
+	case SDL_EVENT_MOUSE_BUTTON_DOWN:
+		return keydown::MOUSEDOWN;
 	}
 
+	// default
+	return -1;
 
 	/*if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
 	{
@@ -190,4 +202,9 @@ int Window::getKeyDownType() const
 		return -1;
 	}
 	return 0;*/
+}
+
+void Window::getMouseCoors(float& x, float& y)
+{
+	SDL_GetMouseState(&x, &y);
 }

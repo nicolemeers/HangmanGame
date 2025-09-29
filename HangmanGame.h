@@ -17,9 +17,6 @@ public:
 
 	// the main game loop
 	bool mainLoop();
-
-	// what do we need to do
-	void takeInGuess(std::string guess);
 	
 	// we need to have something create all of the objects
 	// when they are created, they need to be registered with the rendererengine
@@ -32,7 +29,7 @@ public:
 	// we will create the object and hand its pointer off to the rendererengine
 	// the logic will also get its objects as needed
 
-	void endGame();
+	//bool endGame();
 
 	void close();
 private:
@@ -40,8 +37,14 @@ private:
 	// will have some starting value
 	// when zero, then the game is over
 	int m_chances;
-	int m_factorOfGrid;
+	int m_mouseInput;
+	int m_gameState;
 	std::string m_keyDownInput;
+
+	float m_mouseX;
+	float m_mouseY;
+
+	bool m_quit;
 
 	//std::string m_wordToGuess;
 	
@@ -58,6 +61,7 @@ private:
 	void createRenderObjects();
 	void createGallowsObjects();
 	void createTextObjects();
+	void createWordTextObjects();
 	void createInputObjects();
 
 	void getTexturesForObjects(RenderObject* curObj, std::string name);
@@ -67,6 +71,8 @@ private:
 	// after the guess is done, we need to update based on results back (maybe make private?)
 	// setting things visible, etc...
 	void update();
+
+	void resetGame();
 
 	void drawScreen();
 };

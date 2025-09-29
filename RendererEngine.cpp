@@ -33,7 +33,11 @@ void RendererEngine::drawQuad(int x, int y, int width, int height, SDL_Texture* 
 	// rectangle where the texture is drawn 
 	SDL_FRect textureRect = { x, y, width, height }; 
 	// cover it with the texture - NULL for default center to rotate around
-	SDL_RenderTextureRotated(m_renderer, texture, NULL, &textureRect, angle, NULL, SDL_FLIP_NONE);
+	//if (angle > 0)
+	SDL_FPoint center = { 0, 0 }; // top left corner
+	if (angle < 0)
+		center = { textureRect.w, 0 };
+	SDL_RenderTextureRotated(m_renderer, texture, NULL, &textureRect, angle, &center, SDL_FLIP_NONE);
 }
 
 void RendererEngine::clearScreen()

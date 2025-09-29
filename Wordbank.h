@@ -3,22 +3,24 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <set>
-#include <vector>
 #include <sstream>
 #include <string>
-#include <sstream>
-#include <iostream>
+#include "FileManager.h"
 #pragma once
 
 class Wordbank
 {
 public:
 
+	Wordbank();
+
 	void init();
 
 	void pullWordsFromThesaurus();
 
 	std::string getWordToGuess();
+
+	~Wordbank();
 
 private:
 	
@@ -27,12 +29,21 @@ private:
 
 	// use a set to store all words (set to prevent repeats)
 	std::set<std::string> m_wordBank;
+
+	void pullWordsFromThesaurusAPI();
+
+	void pullWordsFromThesaurusLocal();
 	
 	// input will need to be parsed through to get the words
 	void parseWords(std::string rawBuffer);
 
+	void writeToLocalCopy();
 
+	std::string m_localDictionary;
 
+	bool m_hasLocalCopy;
+
+	FileManager* m_fileMngr;
 
 	
 	// the purpose is to pull all of the words

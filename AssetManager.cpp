@@ -32,7 +32,8 @@ bool AssetManager::init()
 
 	// the img libary is now automatically initalized and handled
 
-	//m_wordBank->pullWordsFromThesaurus();
+	m_wordBank->pullWordsFromThesaurus();
+	// cache locally and then read from that
 }
 
 void AssetManager::loadAssets(RendererEngine* renderer, std::vector<std::string>& assetLocation)

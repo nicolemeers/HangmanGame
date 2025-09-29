@@ -7,12 +7,16 @@ TextLetters::TextLetters()
 	"_", // we will need these
 	"Input:", // for the input box
 	"Guessed Letters:",
+	"Game Over",
+	"Game Win",
+	"New Game",
+	"Exit Game",
 	"A", "B", "C", "D", "E",
 	"F", "G", "H", "I", "J",
 	"K", "L", "M", "N", "O",
 	"P", "Q", "R", "S", "T",
 	"U", "V", "W", "X", "Y",
-	"Z",
+	"Z"
 	};
 
 	// if we want capital letters we should return the word from the word book with capitals
@@ -115,6 +119,58 @@ void TextLetters::update()
 			m_wordToGuess_RenderObjs.at(i)->setVisibleFlag();
 	}
 
+}
+
+void TextLetters::reset(RendererEngine* renderer)
+{
+	// clear away the guessed letters
+	auto end = m_guesses.end();
+	for (auto iter = m_guesses.begin(); iter != end; iter++)
+		iter->second->unsetVisibleFlag();
+
+	// reset our guessed letters
+	auto end2 = m_guessedLetters.end();
+	for (auto iter = m_guessedLetters.begin(); iter != end2; iter++)
+		iter->second = false;
+
+	// we will need a different amount of render objects
+	for (int i = m_wordToGuess_RenderObjs.size() - 1; i>= 0; i--)
+	{
+		renderer->unRegisterObj(m_wordToGuess_RenderObjs[i]);
+		m_wordToGuess_RenderObjs.pop_back();
+	}
+
+	for (int i = m_blankLetterSpots.size() - 1; i >= 0; i--)
+	{
+		renderer->unRegisterObj(m_blankLetterSpots[i]);
+		m_blankLetterSpots.pop_back();
+	}
+	
+	//m_wordToGuess_RenderObjs.clear();
+	//m_blankLetterSpots.clear();
+}
+
+void TextLetters::resetWordToGuess(int screenWidth, int screenHeight)
+{
+	// for the word to guess
+	setUpCoordForWordToGuess(screenWidth, screenHeight);
+	// for the underscores
+	setUpUnderscoresForGuess(screenWidth, screenHeight);
+}
+
+bool TextLetters::checkIfWordIsComplete() const
+{
+	if (m_currentGuess == m_wordToGuess)
+		return true;
+	return false;
+}
+
+void TextLetters::showFullWord()
+{
+	for (int i = 0; i < m_wordToGuess_RenderObjs.size(); i++)
+	{
+		m_wordToGuess_RenderObjs.at(i)->setVisibleFlag();
+	}
 }
 
 void TextLetters::close()

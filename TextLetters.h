@@ -1,5 +1,6 @@
 #include <unordered_map>
 #include <map>
+#include "RendererEngine.h"
 #include "RenderObject.h"
 #pragma once
 class TextLetters
@@ -28,6 +29,11 @@ public:
 	std::string getCurrentGuess();
 
 	void update();
+	void reset(RendererEngine* renderer);
+	void resetWordToGuess(int screenWidth, int screenHeight);
+
+	bool checkIfWordIsComplete() const;
+	void showFullWord();
 
 	void close();
 
@@ -58,7 +64,6 @@ private:
 	RenderObject* m_guessedLettersLabel;
 	std::vector<RenderObject*> m_wordToGuess_RenderObjs;
 	std::vector<RenderObject*> m_blankLetterSpots;
-	//std::unordered_map<std::string, RenderObject*> m_guesses;
 	std::map<std::string, RenderObject*> m_guesses;
 };
 

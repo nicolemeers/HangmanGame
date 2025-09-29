@@ -9,29 +9,81 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* use
 	return totalSize;
 }
 
+Wordbank::Wordbank()
+{
+	m_localDictionary = "./dictionary.csv";
+	m_hasLocalCopy = false;
+}
+
 void Wordbank::init()
 {
-	// set up our vector (our base words)
-	m_newWords =
-	{ "syzygy", "abatis", "controvert", "controversy", "contuse", "luminary", "overt",
-		"narcissism", "happy", "elegant", "poor", "bee", "helicopter", "fast", "fortuitous",
-		"sequacious", "lascivious", "lecherous", "pulchritudinous", "ineffable", "jubilee",
-		"jazz", "rythm", "capricious", "avarice", "greed", "serendipitous", "misanthrope",
-		"taciturn", "aloof", "callous", "cynical", "callow", "sad", "gallows", "perhaps",
-		"melifluous","sonorous", "egress", "somber", "solemn", "gallant", "dour", "din",
-		"eccentric", "epitome", "inundate", "deluged", "frenetic", "dessicated", "wry", "sly",
-		"wend", "gallant", "salacious", "scrupulous", "dubious", "objurgate", "happy", "sad",
-		"splendid", "sublime", "monotonous", "melancholic", "melodious", "bird", "songbird",
-		"rhythm", "silly", "boring", "ubiquitous", "omnipresence", "lovely", "sublime", "happy",
-		"obfuscate", "rythm", "objurgate", "slink", "flick", "gore", "coagulate", "flower", "tree",
-		"young", "suffuse"
-	};
+	m_fileMngr = new FileManager();
+	m_fileMngr->init();
+	// we need to check if we have a cached local version first
+	// if not then we use the API
+	if (m_fileMngr->readFile(m_localDictionary, m_newWords))
+	{
+		m_hasLocalCopy = true;
+	}
+	else
+	{
+		// set up our vector (our base words)
+		m_newWords =
+		{ "syzygy", "abatis", "controvert", "controversy", "contuse", "luminary", "overt",
+			"narcissism", "happy", "elegant", "poor", "bee", "helicopter", "fast", "fortuitous",
+			"sequacious", "lascivious", "lecherous", "pulchritudinous", "ineffable", "jubilee",
+			"jazz", "rythm", "capricious", "avarice", "greed", "serendipitous", "misanthrope",
+			"taciturn", "aloof", "callous", "cynical", "callow", "sad", "gallows", "perhaps",
+			"melifluous","sonorous", "egress", "somber", "solemn", "gallant", "dour", "din",
+			"eccentric", "epitome", "inundate", "deluged", "frenetic", "dessicated", "wry", "sly",
+			"wend", "gallant", "salacious", "scrupulous", "dubious", "objurgate", "happy", "sad",
+			"splendid", "sublime", "monotonous", "melancholic", "melodious", "bird", "songbird",
+			"rhythm", "silly", "boring", "ubiquitous", "omnipresence", "lovely", "sublime", "happy",
+			"obfuscate", "rythm", "objurgate", "slink", "flick", "gore", "coagulate", "flower", "tree",
+			"young", "suffuse"
+		};
 
-	// we need to ensure our base words are in our "bank" of words as well
-	m_wordBank = std::set<std::string>(m_newWords.begin(), m_newWords.end());
+		// we need to ensure our base words are in our "bank" of words as well
+		m_wordBank = std::set<std::string>(m_newWords.begin(), m_newWords.end());
+
+		// we need to create our local copy
+		m_fileMngr->createFile(m_localDictionary);
+	}
 }
 
 void Wordbank::pullWordsFromThesaurus()
+{
+	if (m_hasLocalCopy)
+		pullWordsFromThesaurusLocal();
+	else
+		pullWordsFromThesaurusAPI();
+
+}
+
+std::string Wordbank::getWordToGuess()
+{
+	srand(time(0));
+	if (m_newWords.size() > m_wordBank.size())
+	{
+		int randIndex = rand() % m_newWords.size();
+		std::string word = m_newWords.at(randIndex);
+		return word;
+	}
+	else
+	{
+		int randIndex = rand() % m_wordBank.size();
+		auto iterToWord = next(m_wordBank.begin(), randIndex);
+		return *iterToWord;
+	}
+}
+
+Wordbank::~Wordbank()
+{
+	m_fileMngr->close();
+	delete m_fileMngr;
+}
+
+void Wordbank::pullWordsFromThesaurusAPI()
 {
 	// this will be using libcurl to fill out our selection of words
 
@@ -97,14 +149,14 @@ void Wordbank::pullWordsFromThesaurus()
 
 	// always cleanup
 	curl_global_cleanup();
+
+	// we need to write this to our local cache
+	writeToLocalCopy();
 }
 
-std::string Wordbank::getWordToGuess()
+void Wordbank::pullWordsFromThesaurusLocal()
 {
-	srand(time(0));
-	int randIndex = rand() % m_wordBank.size();
-	auto iterToWord = next(m_wordBank.begin(), randIndex);
-	return *iterToWord;
+	m_fileMngr->readFile(m_localDictionary, m_newWords);
 }
 
 void Wordbank::parseWords(std::string rawBuffer)
@@ -137,15 +189,26 @@ void Wordbank::parseWords(std::string rawBuffer)
 		// get the word
 		getline(parseS, wordToken, '"');
 
+		bool isValidWord = true;
+
 		// check the word for weird tokens -> do not add (some words have accented letters, which are displayed with numbers and slashes in the string)
 		for (int i = 0; i < wordToken.size(); i++)
 		{
 			if (!isalpha(wordToken.at(i)))
-				continue;
+			{
+				isValidWord = false;
+				break;
+			}
 		}
 
 		// add the word into our set
-		m_wordBank.emplace(wordToken);
+		if (isValidWord)
+			m_wordBank.emplace(wordToken);
 
 	}
+}
+
+void Wordbank::writeToLocalCopy()
+{
+	m_fileMngr->addToFile(m_localDictionary, m_wordBank);
 }

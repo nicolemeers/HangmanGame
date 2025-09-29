@@ -66,11 +66,14 @@ void GallowsMan::init(int screenWidth, int screenHeight)
 			x -= 90;
 		}
 		if (i == 6)
-			y += 100;
+		{
+			y += 175;
+			x += 50;
+		}
 		if (i == 7)
 			y += 50;
 		if (i == 9)
-			y += 250;
+			y += 300;
 		iter->second->setX(x);
 		iter->second->setY(y);
 		i++;
@@ -90,10 +93,29 @@ void GallowsMan::registerToMap(RenderObject* renderObj, std::string name)
 	//m_displayObjects.emplace(std::make_pair(name, static_cast<Gallows_Object*>(renderObj)));
 }
 
+void GallowsMan::registerGameEndText(RenderObject* renderObj, std::string name)
+{
+	renderObj->setX(850);
+	renderObj->setY(600);
+	if (name == "Game Win")
+	{
+		m_gameWon = renderObj;
+		//m_gameWon->setName(name);
+	}
+	else
+	{
+		m_gameOver = renderObj;
+		//m_gameOver->setName(name);
+	}
+}
+
 void GallowsMan::updateGallows()
 {
-	if (m_currentState == DEATH)
+	if (m_currentState == DEATH || m_currentState == RIGHT_LEG)
+	{
+		m_gameOver->setVisibleFlag();
 		return;
+	}
 	
 	auto iter = m_displayObjects.begin();
 	for (int i = 0; i < m_currentState; i++) iter++;
@@ -104,6 +126,24 @@ void GallowsMan::updateGallows()
 int GallowsMan::getCurrentState() const
 {
 	return m_currentState;
+}
+
+void GallowsMan::setWinState()
+{
+	m_gameWon->setVisibleFlag();
+}
+
+void GallowsMan::resetState()
+{
+	// clear text
+	m_gameOver->unsetVisibleFlag();
+	m_gameWon->unsetVisibleFlag();
+	// reset gallows
+	m_currentState = START;
+	auto iter = m_displayObjects.begin();
+	auto end = m_displayObjects.end();
+	for (iter; iter != end; iter++)
+		iter->second->unsetVisibleFlag();
 }
 
 void GallowsMan::close()

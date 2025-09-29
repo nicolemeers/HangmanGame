@@ -12,13 +12,16 @@ public:
 
 	//void addToMap
 	void registerToMap(RenderObject* renderObj, std::string name);
+	void registerGameEndText(RenderObject* renderObj, std::string name);
 
 	// there was a wrong guess -> update the state
 	void updateGallows();
 	// get the current state of the gallows
 	int getCurrentState() const;
 	
+	void setWinState();
 
+	void resetState();
 	// the gallowobject will be a visual component, and this will be the logic component
 
 	// this could be responsible for what gallows shapes to put up
@@ -35,7 +38,12 @@ public:
 private:
 	std::vector<std::string> m_imagesToDisaply;
 	int m_currentState;
+	//int m_chancesRemaining;
 	// use a map for the render objects, since they will all have a unique name
 	std::map<std::string, Gallows_Object*> m_displayObjects;
+	
+	//RenderObject* m_chancesRemaining;
+	RenderObject* m_gameOver;
+	RenderObject* m_gameWon;
 };
 

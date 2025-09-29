@@ -108,6 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssetManager.cpp" />
+    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="GallowsMan.cpp" />
     <ClCompile Include="Gallows_Object.cpp" />
     <ClCompile Include="HangmanGame.cpp" />
@@ -147,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssetManager.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="GallowsMan.h" />
     <ClInclude Include="Gallows_Object.h" />
     <ClInclude Include="HangmanGame.h" />

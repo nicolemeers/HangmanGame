@@ -21,7 +21,6 @@ public:
 
 	void loadFontAssets(RendererEngine* renderer, std::vector<std::string>& assetLocation);
 
-
 	// the function anything needs to call in order to get its texture
 	std::shared_ptr<SDL_Texture> getTexture(std::string name);
 	void getDimensions(std::string name, int& w, int &h);
@@ -37,6 +36,7 @@ private:
 	TTF_Font* m_Font = NULL;
 	const char* M_MY_FONT = "C:/Windows/Fonts/BELLI.ttf";
 	int M_FONT_SIZE = 140;
+	int M_GAMEOVER_FONT_SIZE = 320;
 	// Black color for text
 	SDL_Color m_Color = { 0x00, 0x00, 0x00, 0xFF };
 
@@ -53,8 +53,7 @@ private:
 
 	bool checkTexture(std::string name);
 
-
-
+	
 
 	// will track the reference counter
 	// we will use smart pointers so we don't need to explicity reference count

@@ -66,6 +66,7 @@ void RenderObject::convertCoordinates(int& x, int& y, int factorOfGrid) const
 void RenderObject::setTexture(std::shared_ptr<SDL_Texture> texture)
 {
 	m_texture = texture;
+	//if (texture != nullptr)
 	setTextureDimensions(texture->w, texture->h);
 }
 
