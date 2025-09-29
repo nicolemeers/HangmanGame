@@ -1,0 +1,46 @@
+.vs/
+Hangman/
+x64/
+
+# Build results
+[Bb]in/
+[Oo]bj/
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ipch
+*.iobj
+*.idb
+*.suo
+*.sdf
+*.cache
+*.log
+
+# User-specific files
+*.user
+*.userosscache
+*.sln.docstates
+
+# Auto-generated files
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+
+# Backup and temporary files
+*.bak
+*.tmp
+*.swp
+
+# Ignore compiled object files
+*.o
+*.obj
+
+# Ignore precompiled headers
+*.pch
+
+# Ignore directories for testing or external dependencies
+test_output/
+external_libs/
+
+
