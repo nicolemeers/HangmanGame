@@ -16,7 +16,7 @@ public:
 	bool getVisibleFlag();
 
 	bool isDrawAtAngle() const;
-	virtual int getAngle() = 0;
+	virtual int getAngle() const = 0;
 
 	void setName(std::string name);
 

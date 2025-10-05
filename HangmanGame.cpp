@@ -276,7 +276,7 @@ void HangmanGame::createInputObjects()
 
 }
 
-void HangmanGame::getTexturesForObjects(RenderObject* curObj, std::string name)
+void HangmanGame::getTexturesForObjects(RenderObject* curObj, const std::string& name)
 {
 	curObj->setTexture(m_assetManager->getTexture(name));
 	int w, h;

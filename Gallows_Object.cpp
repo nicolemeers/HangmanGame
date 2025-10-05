@@ -13,7 +13,7 @@ void Gallows_Object::setDrawAtAngle(int angle)
 	m_angle = angle;
 }
 
-int Gallows_Object::getAngle()
+int Gallows_Object::getAngle() const
 {
 	return m_angle;
 }

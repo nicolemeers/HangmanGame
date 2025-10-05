@@ -48,8 +48,6 @@ bool Window::init()
 			SDL_SyncWindow(m_Window);
 
 
-			
-
 			if (m_Renderer == NULL)
 			{
 				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
@@ -89,39 +87,41 @@ int Window::getScreenWidth()
 	return m_screenWidth;
 }
 
-SDL_Window* Window::getWindow()
+SDL_Window* Window::GetWindow()
 {
 	return m_Window;
 }
 
-SDL_Renderer* Window::getRenderer()
+SDL_Renderer* Window::GetRenderer()
 {
 	return m_Renderer;
 }
 
 bool Window::checkPollEvents()
 {
-	return (SDL_PollEvent(&e) != 0);
+	return (SDL_PollEvent(&m_sdlEvent) != 0);
 }
 
 bool Window::isPollEventQuit() const
 {
-	return (e.type == SDL_EVENT_QUIT);
+	return (m_sdlEvent.type == SDL_EVENT_QUIT);
 }
 
 bool Window::isKeydownEventTrue() const
 {
-	if (e.type == SDL_EVENT_KEY_DOWN)
+	if (m_sdlEvent.type == SDL_EVENT_KEY_DOWN)
 		return true;
-	if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+	if (m_sdlEvent.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+		return true;
+	if (m_sdlEvent.type == SDL_EVENT_TEXT_INPUT)
 		return true;
 	return false;
-	//return (e.type == SDL_EVENT_KEY_DOWN);
+	//return (m_sdlEvent.type == SDL_EVENT_KEY_DOWN);
 }
 
 int Window::getKeyDownType() const
 {
-	switch (e.key.key)
+	switch (m_sdlEvent.key.key)
 	{
 	case SDLK_Q:
 		return keydown::Q;
@@ -184,24 +184,21 @@ int Window::getKeyDownType() const
 	//default:
 		//return -1;
 	}
-	switch (e.type)
+	switch (m_sdlEvent.type)
 	{
 	case SDL_EVENT_MOUSE_BUTTON_DOWN:
 		return keydown::MOUSEDOWN;
+	case SDL_EVENT_TEXT_INPUT:
+		return keydown::TEXT_INPUT;
 	}
 
 	// default
 	return -1;
+}
 
-	/*if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
-	{
-		return 1;
-	}
-	else
-	{
-		return -1;
-	}
-	return 0;*/
+std::string Window::getTextInputText()
+{
+	return m_sdlEvent.text.text;
 }
 
 void Window::getMouseCoors(float& x, float& y)

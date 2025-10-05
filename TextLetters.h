@@ -12,18 +12,18 @@ public:
 	
 	std::vector<std::string>& getPossibleCharacters();
 
-	void registerLetters(RenderObject* curObj, std::string name);
+	void registerLetters(RenderObject* curObj, const std::string& name);
 	void registerWord(RenderObject* curObj);
 	void registerUnderscore(RenderObject* curObj);
 	void registerGuessedLabel(RenderObject* curObj);
 
 	// save the word for the game
-	void setWordToGuess(std::string wordToGuess);
+	void setWordToGuess(const std::string& wordToGuess);
 	std::string getWord() const;
 
 	// we are going to check if this letter is a good guess
 	// it will also check if this letter has been guessed already (to avoid double striking)
-	bool checkGuess(std::string guessedLettter);
+	bool checkGuess(const std::string& guessedLettter);
 
 	// return the current guess state 
 	std::string getCurrentGuess();

@@ -7,7 +7,6 @@
 
 int main(int argc, char* args[])
 {
-
 	HangmanGame hangmanGame;
 
 	hangmanGame.init();
@@ -15,8 +14,6 @@ int main(int argc, char* args[])
 	while (hangmanGame.mainLoop()) {}
 
 	hangmanGame.close();
-
-
 
 	return 0;
 }

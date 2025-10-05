@@ -22,8 +22,8 @@ public:
 	void loadFontAssets(RendererEngine* renderer, std::vector<std::string>& assetLocation);
 
 	// the function anything needs to call in order to get its texture
-	std::shared_ptr<SDL_Texture> getTexture(std::string name);
-	void getDimensions(std::string name, int& w, int &h);
+	std::shared_ptr<SDL_Texture> getTexture(const std::string& name);
+	void getDimensions(const std::string& name, int& w, int &h);
 	std::string getWordToGuess();
 
 	//void unloadTextures(); // maybe have this private and do in close -> using smart pointers
@@ -49,9 +49,9 @@ private:
 	SDL_Surface* loadFontSurface(std::string convertToTexture);
 	// will unload the surface once the texture is created
 	void loadAllTextures(RendererEngine* renderer);
-	std::shared_ptr<SDL_Texture> loadTexture(RendererEngine* renderer, SDL_Surface* surfaceToConvert, std::string name);
+	std::shared_ptr<SDL_Texture> loadTexture(RendererEngine* renderer, SDL_Surface* surfaceToConvert, const std::string& name);
 
-	bool checkTexture(std::string name);
+	bool checkTexture(const std::string& name);
 
 	
 

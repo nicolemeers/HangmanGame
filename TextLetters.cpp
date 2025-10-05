@@ -11,6 +11,7 @@ TextLetters::TextLetters()
 	"Game Win",
 	"New Game",
 	"Exit Game",
+	//"Guesses Remaining:",
 	"A", "B", "C", "D", "E",
 	"F", "G", "H", "I", "J",
 	"K", "L", "M", "N", "O",
@@ -41,7 +42,7 @@ std::vector<std::string>& TextLetters::getPossibleCharacters()
 	return m_possibleCharacters;
 }
 
-void TextLetters::registerLetters(RenderObject* curObj, std::string name)
+void TextLetters::registerLetters(RenderObject* curObj, const std::string& name)
 {
 	//m_guesses.emplace(name, curObj);
 	// under the hood this makes a pair
@@ -64,7 +65,7 @@ void TextLetters::registerGuessedLabel(RenderObject* curObj)
 	m_guessedLettersLabel = curObj;
 }
 
-void TextLetters::setWordToGuess(std::string wordToGuess)
+void TextLetters::setWordToGuess(const std::string& wordToGuess)
 {
 	m_wordToGuess = wordToGuess;
 	m_currentGuess = wordToGuess;
@@ -77,7 +78,7 @@ void TextLetters::setWordToGuess(std::string wordToGuess)
 	}
 }
 
-bool TextLetters::checkGuess(std::string guessedLettter)
+bool TextLetters::checkGuess(const std::string& guessedLettter)
 {
 	char guess = guessedLettter.at(0);
 	if (checkIfNewGuess(guess))

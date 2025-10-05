@@ -15,7 +15,7 @@ Wordbank::Wordbank()
 	m_hasLocalCopy = false;
 }
 
-void Wordbank::init()
+void Wordbank::Init()
 {
 	m_fileMngr = new FileManager();
 	m_fileMngr->init();
@@ -51,16 +51,16 @@ void Wordbank::init()
 	}
 }
 
-void Wordbank::pullWordsFromThesaurus()
+void Wordbank::PullWordsFromThesaurus()
 {
 	if (m_hasLocalCopy)
-		pullWordsFromThesaurusLocal();
+		PullWordsFromThesaurusLocal();
 	else
-		pullWordsFromThesaurusAPI();
+		PullWordsFromThesaurusAPI();
 
 }
 
-std::string Wordbank::getWordToGuess()
+std::string& Wordbank::GetWordToGuess()
 {
 	srand(time(0));
 	if (m_newWords.size() > m_wordBank.size())
@@ -73,8 +73,10 @@ std::string Wordbank::getWordToGuess()
 	{
 		int randIndex = rand() % m_wordBank.size();
 		auto iterToWord = next(m_wordBank.begin(), randIndex);
-		return *iterToWord;
+		std::string word = *iterToWord;
+		return word;
 	}
+
 }
 
 Wordbank::~Wordbank()
@@ -83,7 +85,7 @@ Wordbank::~Wordbank()
 	delete m_fileMngr;
 }
 
-void Wordbank::pullWordsFromThesaurusAPI()
+void Wordbank::PullWordsFromThesaurusAPI()
 {
 	// this will be using libcurl to fill out our selection of words
 
@@ -138,7 +140,7 @@ void Wordbank::pullWordsFromThesaurusAPI()
 		{
 			// we were able to get the response back
 			// we need to parse the response into a format that we can enter into our word bank
-			parseWords(readWordsIn);
+			ParseWords(readWordsIn);
 		}
 
 		// cleanup the current session
@@ -151,15 +153,15 @@ void Wordbank::pullWordsFromThesaurusAPI()
 	curl_global_cleanup();
 
 	// we need to write this to our local cache
-	writeToLocalCopy();
+	WriteToLocalCopy();
 }
 
-void Wordbank::pullWordsFromThesaurusLocal()
+void Wordbank::PullWordsFromThesaurusLocal()
 {
 	m_fileMngr->readFile(m_localDictionary, m_newWords);
 }
 
-void Wordbank::parseWords(std::string rawBuffer)
+void Wordbank::ParseWords(std::string rawBuffer)
 {
 	// we know we get the response in JSON format, and need to parse it out
 
@@ -208,7 +210,7 @@ void Wordbank::parseWords(std::string rawBuffer)
 	}
 }
 
-void Wordbank::writeToLocalCopy()
+void Wordbank::WriteToLocalCopy()
 {
 	m_fileMngr->addToFile(m_localDictionary, m_wordBank);
 }

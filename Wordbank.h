@@ -14,11 +14,11 @@ public:
 
 	Wordbank();
 
-	void init();
+	void Init();
 
-	void pullWordsFromThesaurus();
+	void PullWordsFromThesaurus();
 
-	std::string getWordToGuess();
+	std::string& GetWordToGuess();
 
 	~Wordbank();
 
@@ -30,14 +30,14 @@ private:
 	// use a set to store all words (set to prevent repeats)
 	std::set<std::string> m_wordBank;
 
-	void pullWordsFromThesaurusAPI();
+	void PullWordsFromThesaurusAPI();
 
-	void pullWordsFromThesaurusLocal();
+	void PullWordsFromThesaurusLocal();
 	
 	// input will need to be parsed through to get the words
-	void parseWords(std::string rawBuffer);
+	void ParseWords(std::string rawBuffer);
 
-	void writeToLocalCopy();
+	void WriteToLocalCopy();
 
 	std::string m_localDictionary;
 

@@ -6,7 +6,7 @@ void Text_Object::init()
 	m_angle = 0;
 }
 
-int Text_Object::getAngle()
+int Text_Object::getAngle() const
 {
 	return 0;
 }

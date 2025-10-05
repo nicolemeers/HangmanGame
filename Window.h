@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL3/SDL.h>
+#include <string>
 //#include <SDL3/SDL_main.h>
 #include "keydown_namespace.h"
 #pragma once
@@ -23,8 +24,8 @@ public:
 	int getScreenWidth();
 
 	// get renderer and window
-	SDL_Window* getWindow();
-	SDL_Renderer* getRenderer();
+	SDL_Window* GetWindow();
+	SDL_Renderer* GetRenderer();
 
 	// handle the sdl events
 	bool checkPollEvents();
@@ -32,6 +33,7 @@ public:
 	bool isKeydownEventTrue() const;
 	// get the keydown event and return what key it is
 	int getKeyDownType() const;
+	std::string getTextInputText();
 
 	void getMouseCoors(float& x, float& y);
 
@@ -44,7 +46,7 @@ private:
 	//The window renderer (to draw on the window)
 	SDL_Renderer* m_Renderer = NULL;
 	// Event handler
-	SDL_Event e;
+	SDL_Event m_sdlEvent;
 
 
 };

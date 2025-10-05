@@ -6,7 +6,7 @@ class Text_Object : public RenderObject
 public:
 	void init();
 
-	int getAngle();
+	int getAngle() const;
 	//virtual std::string getName();
 	void close();
 private:

@@ -7,7 +7,7 @@ public:
 
 	void init(int screenWidth, int screenHeight);
 
-	void updateInputField(std::string newInput, AssetManager* assetManager);
+	void updateInputField(std::string& newInput, AssetManager* assetManager);
 	void updateInputTexture(AssetManager* assetManager);
 	void showNewGameBox();
 	bool checkifExitGameClicked(int x, int y);

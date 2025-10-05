@@ -64,7 +64,7 @@ private:
 	void createWordTextObjects();
 	void createInputObjects();
 
-	void getTexturesForObjects(RenderObject* curObj, std::string name);
+	void getTexturesForObjects(RenderObject* curObj, const std::string& name);
 
 	std::string getKeyInput(int keyVal);
 

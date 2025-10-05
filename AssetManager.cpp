@@ -12,7 +12,7 @@ struct SDLTextureDeleter {
 bool AssetManager::init()
 {
 	m_wordBank = new Wordbank();
-	m_wordBank->init();
+	m_wordBank->Init();
 
 	// Initialize SDL_ttf
 	if (TTF_Init() == -1) {
@@ -32,7 +32,7 @@ bool AssetManager::init()
 
 	// the img libary is now automatically initalized and handled
 
-	m_wordBank->pullWordsFromThesaurus();
+	m_wordBank->PullWordsFromThesaurus();
 	// cache locally and then read from that
 }
 
@@ -57,14 +57,14 @@ void AssetManager::loadFontAssets(RendererEngine* renderer, std::vector<std::str
 	loadAllTextures(renderer);
 }
 
-std::shared_ptr<SDL_Texture> AssetManager::getTexture(std::string name)
+std::shared_ptr<SDL_Texture> AssetManager::getTexture(const std::string& name)
 {
 	if (checkTexture(name))
 		return m_textures[name];
 	return nullptr;
 }
 
-void AssetManager::getDimensions(std::string name, int& w, int &h)
+void AssetManager::getDimensions(const std::string& name, int& w, int &h)
 {
 	if (checkTexture(name))
 	{
@@ -75,7 +75,7 @@ void AssetManager::getDimensions(std::string name, int& w, int &h)
 
 std::string AssetManager::getWordToGuess()
 {
-	std::string wordChosen = m_wordBank->getWordToGuess();
+	std::string wordChosen = m_wordBank->GetWordToGuess();
 	std::transform(wordChosen.begin(), wordChosen.end(), wordChosen.begin(), ::toupper);
 	return wordChosen;
 }
@@ -129,7 +129,7 @@ void AssetManager::loadAllTextures(RendererEngine* renderer)
 	}
 }
 
-std::shared_ptr<SDL_Texture> AssetManager::loadTexture(RendererEngine* renderer, SDL_Surface* surfaceToConvert, std::string name)
+std::shared_ptr<SDL_Texture> AssetManager::loadTexture(RendererEngine* renderer, SDL_Surface* surfaceToConvert, const std::string& name)
 {
 	if (!surfaceToConvert)
 		return nullptr;
@@ -156,7 +156,7 @@ std::shared_ptr<SDL_Texture> AssetManager::loadTexture(RendererEngine* renderer,
 	return std::shared_ptr<SDL_Texture>(texture, SDLTextureDeleter{});
 }
 
-bool AssetManager::checkTexture(std::string name)
+bool AssetManager::checkTexture(const std::string& name)
 {
 	if (m_textures.find(name) != m_textures.end())// && m_dimensions.find(name) != m_dimensions.end())
 		return true;

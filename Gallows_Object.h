@@ -8,7 +8,7 @@ public:
 	void init();
 
 	void setDrawAtAngle(int angle);
-	int getAngle();
+	int getAngle() const;
 
 	void close();
 

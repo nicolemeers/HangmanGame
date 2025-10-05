@@ -4,18 +4,18 @@ void FileManager::init()
 {
 }
 
-bool FileManager::readFile(std::string filePath, std::vector<std::string>& dataToRead)
+bool FileManager::readFile(const std::string& filePath, std::vector<std::string>& dataToRead)
 {
     if (checkIfFileExists(filePath))
     {
-        f.open(filePath, std::fstream::in);
-        if (f.is_open())
+        m_dictionaryFile.open(filePath, std::fstream::in);
+        if (m_dictionaryFile.is_open())
         {
             // read the file
             // will be length of file (# words)
             // name (dictionary)
             std::string header = "";
-            getline(f, header);
+            getline(m_dictionaryFile, header);
 
             std::istringstream h(header);
             std::string token = "";
@@ -23,11 +23,11 @@ bool FileManager::readFile(std::string filePath, std::vector<std::string>& dataT
             std::getline(h, token, ',');
             int size = std::stoi(token);
             dataToRead = std::vector<std::string>(size, "");
-            getline(f, header);
+            getline(m_dictionaryFile, header);
 
             std::string curLine = "";
             int index = 0;
-            while (getline(f, curLine))
+            while (getline(m_dictionaryFile, curLine))
             {
                 std::istringstream s(curLine);
                 
@@ -40,7 +40,7 @@ bool FileManager::readFile(std::string filePath, std::vector<std::string>& dataT
                 //std::getline(s, token);
                 //dataToRead[index] = token;
             }
-            f.close();
+            m_dictionaryFile.close();
             return true;
         }
         else
@@ -52,33 +52,33 @@ bool FileManager::readFile(std::string filePath, std::vector<std::string>& dataT
     return false;
 }
 
-bool FileManager::writeFile(std::string filePath, std::vector<std::string>& dataToWrite)
+bool FileManager::writeFile(const std::string& filePath, std::vector<std::string>& dataToWrite)
 {
     if (checkIfFileExists(filePath))
     {
-        f.open(filePath, std::fstream::out);
-        if (f.is_open())
+        m_dictionaryFile.open(filePath, std::fstream::out);
+        if (m_dictionaryFile.is_open())
         {
             int size = dataToWrite.size();
             // write out the header information
             // for now:
-            f << size << "," << "dictionary\n";
+            m_dictionaryFile << size << "," << "dictionary\n";
 
             // content
             for (int i = 0; i < size; i++)
             {
                 if (i == size - 1)
-                    f << dataToWrite[i] << "\n";
+                    m_dictionaryFile << dataToWrite[i] << "\n";
                 else if (i % 5 == 0)
                 {
-                    f << dataToWrite[i] << "\n";
+                    m_dictionaryFile << dataToWrite[i] << "\n";
                 }
                 else
                 {
-                    f << dataToWrite[i] << ",";
+                    m_dictionaryFile << dataToWrite[i] << ",";
                 }
             }
-            f.close();
+            m_dictionaryFile.close();
             return true;
         }
         else
@@ -89,33 +89,33 @@ bool FileManager::writeFile(std::string filePath, std::vector<std::string>& data
     return false;
 }
 
-bool FileManager::addToFile(std::string filePath, std::vector<std::string>& dataToAppend)
+bool FileManager::addToFile(const std::string& filePath, std::vector<std::string>& dataToAppend)
 {
     if (checkIfFileExists(filePath))
     {
-        f.open(filePath, std::fstream::out | std::fstream::app);
-        if (f.is_open())
+        m_dictionaryFile.open(filePath, std::fstream::out | std::fstream::app);
+        if (m_dictionaryFile.is_open())
         {
             int size = dataToAppend.size();
             // write out the header information
             // for now:
-            f << size << "," << "dictionary\n";
+            m_dictionaryFile << size << "," << "dictionary\n";
 
             // content
             for (int i = 0; i < size; i++)
             {
                 if (i == size - 1)
-                    f << dataToAppend[i] << "\n";
+                    m_dictionaryFile << dataToAppend[i] << "\n";
                 else if (i % 5 == 0)
                 {
-                    f << dataToAppend[i] << "\n";
+                    m_dictionaryFile << dataToAppend[i] << "\n";
                 }
                 else
                 {
-                    f << dataToAppend[i] << ",";
+                    m_dictionaryFile << dataToAppend[i] << ",";
                 }
             }
-            f.close();
+            m_dictionaryFile.close();
             return true;
         }
         else
@@ -126,19 +126,19 @@ bool FileManager::addToFile(std::string filePath, std::vector<std::string>& data
     return false;
 }
 
-bool FileManager::addToFile(std::string filePath, std::set<std::string>& dataToAppend)
+bool FileManager::addToFile(const std::string& filePath, std::set<std::string>& dataToAppend)
 {
     if (checkIfFileExists(filePath))
     {
-        f.open(filePath, std::fstream::out | std::fstream::app);
-        if (f.is_open())
+        m_dictionaryFile.open(filePath, std::fstream::out | std::fstream::app);
+        if (m_dictionaryFile.is_open())
         {
             int size = dataToAppend.size();
             auto iter = dataToAppend.begin();
             auto end = dataToAppend.end();
             // write out the header information
             // for now:
-            f << size << "," << "dictionary\n";
+            m_dictionaryFile << size << "," << "dictionary\n";
 
             // content
             //for (int i = 0; i < size; i++)
@@ -146,17 +146,17 @@ bool FileManager::addToFile(std::string filePath, std::set<std::string>& dataToA
             for (iter; iter != end; iter++)
             {
                 if (i == size - 1)
-                    f << *iter << "\n";
+                    m_dictionaryFile << *iter << "\n";
                 else if (i % 5 == 0)
                 {
-                    f << *iter << "\n";
+                    m_dictionaryFile << *iter << "\n";
                 }
                 else
                 {
-                    f << *iter << ",";
+                    m_dictionaryFile << *iter << ",";
                 }
             }
-            f.close();
+            m_dictionaryFile.close();
             return true;
         }
         else
@@ -167,14 +167,14 @@ bool FileManager::addToFile(std::string filePath, std::set<std::string>& dataToA
     return false;
 }
 
-bool FileManager::checkIfFileExists(std::string filePath)
+bool FileManager::checkIfFileExists(const std::string& filePath)
 {
     if (std::filesystem::exists(filePath))
         return true;
     return false;
 }
 
-bool FileManager::createFile(std::string filePath)
+bool FileManager::createFile(const std::string& filePath)
 {
     std::ofstream createdFile(filePath);
     if (createdFile.is_open())
@@ -186,7 +186,7 @@ bool FileManager::createFile(std::string filePath)
     return false;
 }
 
-bool FileManager::deleteFile(std::string filePath)
+bool FileManager::deleteFile(const std::string& filePath)
 {
     if (checkIfFileExists(filePath))
     {
@@ -207,5 +207,5 @@ bool FileManager::deleteFile(std::string filePath)
 
 void FileManager::close()
 {
-    //f.close();
+    //m_dictionaryFile.close();
 }

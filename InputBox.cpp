@@ -17,7 +17,7 @@ void InputBox::init(int screenWidth, int screenHeight)
 	m_exitGame->setY(950);
 }
 
-void InputBox::updateInputField(std::string newInput, AssetManager* assetManager)
+void InputBox::updateInputField(std::string& newInput, AssetManager* assetManager)
 {
 	m_textString = newInput;
 	updateInputTexture(assetManager);
