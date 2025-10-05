@@ -28,7 +28,7 @@ void HangmanGame::init()
 	std::thread threadForWordbank(&AssetManager::init, m_assetManager);
 
 	m_window->init();
-	m_renderer->init(m_window->getRenderer());
+	m_renderer->init(m_window->GetRenderer());
 
 	loadAssets();
 	
