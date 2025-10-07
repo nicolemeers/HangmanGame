@@ -66,8 +66,9 @@ std::string& Wordbank::GetWordToGuess()
 	if (m_newWords.size() > m_wordBank.size())
 	{
 		int randIndex = rand() % m_newWords.size();
-		std::string word = m_newWords.at(randIndex);
-		return word;
+		//std::string word = m_newWords.at(randIndex);
+		//return word;
+		return m_newWords.at(randIndex);
 	}
 	else
 	{

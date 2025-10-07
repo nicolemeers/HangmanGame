@@ -3,6 +3,11 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_image/SDL_image.h>
 #include "HangmanGame.h"
+
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #pragma once
 
 int main(int argc, char* args[])
@@ -14,6 +19,9 @@ int main(int argc, char* args[])
 	while (hangmanGame.mainLoop()) {}
 
 	hangmanGame.close();
+
+	//_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+	//_CrtDumpMemoryLeaks();
 
 	return 0;
 }
